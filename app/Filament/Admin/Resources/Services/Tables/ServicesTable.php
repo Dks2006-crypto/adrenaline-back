@@ -1,0 +1,58 @@
+<?php
+
+namespace App\Filament\Admin\Resources\Services\Tables;
+
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+
+class ServicesTable
+{
+    public static function configure(Table $table): Table
+    {
+        return $table
+            ->columns([
+                TextColumn::make('title')
+                    ->searchable(),
+                TextColumn::make('duration_days')
+                    ->numeric()
+                    ->sortable(),
+                TextColumn::make('visits_limit')
+                    ->numeric()
+                    ->sortable(),
+                TextColumn::make('price_cents')
+                    ->numeric()
+                    ->sortable(),
+                TextColumn::make('currency')
+                    ->searchable(),
+                TextColumn::make('branch.name')
+                    ->searchable(),
+                IconColumn::make('active')
+                    ->boolean(),
+                TextColumn::make('type')
+                    ->searchable(),
+                TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('updated_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+            ])
+            ->filters([
+                //
+            ])
+            ->recordActions([
+                EditAction::make(),
+            ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
+    }
+}

@@ -1,0 +1,97 @@
+<?php
+
+namespace App\Filament\Admin\Resources\Forms;
+
+use App\Filament\Admin\Resources\Forms\Pages\CreateForm;
+use App\Filament\Admin\Resources\Forms\Pages\EditForm;
+use App\Filament\Admin\Resources\Forms\Pages\ListForms;
+use App\Filament\Admin\Resources\Forms\Schemas\FormForm;
+use App\Filament\Admin\Resources\Forms\Tables\FormsTable;
+use App\Models\Form;
+use BackedEnum;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
+
+class FormResource extends Resource
+{
+    protected static ?string $model = Form::class;
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-calendar';
+    protected static ?string $navigationLabel = 'Занятия';
+    protected static ?string $modelLabel = 'Занятие';
+
+    public static function getRecordTitle(?Model $record): ?string
+{
+    if (!$record) {
+        return null;
+    }
+
+    return match (true) {
+
+        $record instanceof Form =>
+            $record->service?->title . ' — ' . $record->starts_at?->format('d.m.Y H:i'),
+
+
+        default => $record->getKey(),
+    };
+}
+
+    public static function form(Schema $schema): Schema
+    {
+        return $schema
+            ->schema([
+                Select::make('service_id')
+                    ->relationship('service', 'title')
+                    ->required(),
+                Select::make('trainer_id')
+                    ->relationship('trainer.user', 'first_name'),
+                Select::make('branch_id')
+                    ->relationship('branch', 'name')
+                    ->required(),
+                DateTimePicker::make('starts_at')->required(),
+                DateTimePicker::make('ends_at')->required(),
+                TextInput::make('capacity')->numeric()->required(),
+                TextInput::make('recurrence_rule'),
+            ]);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                TextColumn::make('service.title'),
+                TextColumn::make('trainer.user.first_name'),
+                TextColumn::make('starts_at')
+                    ->dateTime('d.m H:i'),
+                TextColumn::make('capacity'),
+            ])
+            ->actions([
+                EditAction::make(),
+                DeleteAction::make(),
+            ]);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListForms::route('/'),
+            'create' => CreateForm::route('/create'),
+            'edit' => EditForm::route('/{record}/edit'),
+        ];
+    }
+}

@@ -9,7 +9,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Trainer extends Model
 {
     protected $fillable = [
-        'user_id', 'bio', 'specialties', 'rating'
+        'user_id',
+        'bio',
+        'specialties',
+        'rating'
     ];
 
     protected $casts = [
