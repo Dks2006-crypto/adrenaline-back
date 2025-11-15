@@ -36,7 +36,7 @@ protected static ?string $model = Booking::class;
     return match (true) {
 
         $record instanceof Booking =>
-            ($record->user?->first_name ?? 'Клиент') . ' → ' .
+            ($record->user?->name ?? 'Клиент') . ' → ' .
             ($record->class?->service?->title ?? 'Персональная тренировка'),
 
         default => $record->getKey(),
@@ -53,7 +53,7 @@ protected static ?string $model = Booking::class;
                 Select::make('class_id')
                     ->relationship('class.service', 'title'),
                 Select::make('trainer_id')
-                    ->relationship('trainer.user', 'first_name'),
+                    ->relationship('trainer.user', 'name'),
                 Select::make('status')
                     ->options([
                         'pending' => 'Ожидает',

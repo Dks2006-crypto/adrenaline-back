@@ -52,7 +52,7 @@ class FormResource extends Resource
                     ->relationship('service', 'title')
                     ->required(),
                 Select::make('trainer_id')
-                    ->relationship('trainer.user', 'first_name'),
+                    ->relationship('trainer.user', 'name'),
                 Select::make('branch_id')
                     ->relationship('branch', 'name')
                     ->required(),
@@ -68,7 +68,7 @@ class FormResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('service.title'),
-                TextColumn::make('trainer.user.first_name'),
+                TextColumn::make('trainer.user.name'),
                 TextColumn::make('starts_at')
                     ->dateTime('d.m H:i'),
                 TextColumn::make('capacity'),

@@ -35,8 +35,8 @@ class UserResource extends Resource
 
     return match (true) {
         $record instanceof User =>
-            $record->first_name
-                ? trim($record->first_name . ' ' . ($record->last_name ?? ''))
+            $record->name
+                ? trim($record->name . ' ' . ($record->last_name ?? ''))
                 : $record->email,
 
         default => $record->getKey(),
@@ -59,7 +59,7 @@ class UserResource extends Resource
                 TextInput::make('password_confirmation')
                     ->password()
                     ->dehydrated(false),
-                TextInput::make('first_name'),
+                TextInput::make('name'),
                 TextInput::make('last_name'),
                 DatePicker::make('birth_date'),
                 Select::make('gender')
@@ -78,7 +78,7 @@ class UserResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('email')->searchable(),
-                TextColumn::make('first_name'),
+                TextColumn::make('name'),
                 TextColumn::make('role.name')
                     ->badge()
                     ->color(fn ($state) => match ($state) {

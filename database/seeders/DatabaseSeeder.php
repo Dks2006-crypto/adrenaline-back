@@ -17,68 +17,73 @@ class DatabaseSeeder extends Seeder
     /**
      * Seed the application's database.
      */
-public function run(): void
-{
-    // Роли
-    Role::create(['name' => 'admin']);
-    Role::create(['name' => 'manager']);
-    Role::create(['name' => 'trainer']);
-    Role::create(['name' => 'client']);
+    public function run(): void
+    {
 
-    // Админ
-    $admin = User::create([
-        'email' => 'admin@fitness.ru',
-        'password' => bcrypt('password'),
-        'first_name' => 'Админ',
-        'role_id' => Role::where('name', 'admin')->first()->id,
-        'confirmed_at' => now(),
-    ]);
+        $this->call([
+            RoleSeeder::class,
+        ]);
 
-    // Филиалы
-    $branch = Branch::create([
-        'name' => 'Фитнес-клуб "Сила"',
-        'address' => 'ул. Ленина, 10',
-        'timezone' => 'Europe/Moscow',
-        'contact_phone' => '+7 (999) 123-45-67',
-    ]);
+        // Роли
+        Role::create(['name' => 'admin']);
+        Role::create(['name' => 'manager']);
+        Role::create(['name' => 'trainer']);
+        Role::create(['name' => 'client']);
 
-    // Тренера
-    $trainerUser = User::create([
-        'email' => 'trainer@fitness.ru',
-        'password' => bcrypt('password'),
-        'first_name' => 'Алексей',
-        'last_name' => 'Тренеров',
-        'branch_id' => $branch->id,
-        'role_id' => Role::where('name', 'trainer')->first()->id,
-    ]);
+        // Админ
+        $admin = User::create([
+            'email' => 'admin@fitness.ru',
+            'password' => bcrypt('password'),
+            'name' => 'Админ',
+            'role_id' => Role::where('name', 'admin')->first()->id,
+            'confirmed_at' => now(),
+        ]);
 
-    Trainer::create([
-        'user_id' => $trainerUser->id,
-        'bio' => 'Сертифицированный тренер по фитнесу и йоге.',
-        'specialties' => ['yoga', 'pilates'],
-    ]);
+        // Филиалы
+        $branch = Branch::create([
+            'name' => 'Фитнес-клуб "Сила"',
+            'address' => 'ул. Ленина, 10',
+            'timezone' => 'Europe/Moscow',
+            'contact_phone' => '+7 (999) 123-45-67',
+        ]);
 
-    // Тарифы
-    Service::create([
-        'title' => 'Месячный безлимит',
-        'description' => 'Полный доступ ко всем залам',
-        'duration_days' => 30,
-        'visits_limit' => null,
-        'price_cents' => 490000, // 4900.00 RUB
-        'currency' => 'RUB',
-        'branch_id' => $branch->id,
-        'type' => 'monthly',
-    ]);
+        // Тренера
+        $trainerUser = User::create([
+            'email' => 'trainer@fitness.ru',
+            'password' => bcrypt('password'),
+            'name' => 'Алексей',
+            'last_name' => 'Тренеров',
+            'branch_id' => $branch->id,
+            'role_id' => Role::where('name', 'trainer')->first()->id,
+        ]);
 
-    Service::create([
-        'title' => '10 посещений',
-        'description' => 'Разовые посещения',
-        'duration_days' => 90,
-        'visits_limit' => 10,
-        'price_cents' => 350000,
-        'currency' => 'RUB',
-        'branch_id' => $branch->id,
-        'type' => 'single',
-    ]);
-}
+        Trainer::create([
+            'user_id' => $trainerUser->id,
+            'bio' => 'Сертифицированный тренер по фитнесу и йоге.',
+            'specialties' => ['yoga', 'pilates'],
+        ]);
+
+        // Тарифы
+        Service::create([
+            'title' => 'Месячный безлимит',
+            'description' => 'Полный доступ ко всем залам',
+            'duration_days' => 30,
+            'visits_limit' => null,
+            'price_cents' => 490000, // 4900.00 RUB
+            'currency' => 'RUB',
+            'branch_id' => $branch->id,
+            'type' => 'monthly',
+        ]);
+
+        Service::create([
+            'title' => '10 посещений',
+            'description' => 'Разовые посещения',
+            'duration_days' => 90,
+            'visits_limit' => 10,
+            'price_cents' => 350000,
+            'currency' => 'RUB',
+            'branch_id' => $branch->id,
+            'type' => 'single',
+        ]);
+    }
 }

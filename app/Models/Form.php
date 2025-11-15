@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Form extends Model
 {
-    protected $table = 'classes';
+    protected $table = 'forms';
 
     protected $fillable = [
         'service_id',

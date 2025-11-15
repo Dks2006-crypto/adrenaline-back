@@ -22,7 +22,7 @@ class UserForm
                 TextInput::make('password')
                     ->password()
                     ->required(),
-                TextInput::make('first_name'),
+                TextInput::make('name'),
                 TextInput::make('last_name'),
                 DatePicker::make('birth_date'),
                 TextInput::make('gender'),

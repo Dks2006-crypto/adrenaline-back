@@ -37,8 +37,8 @@ class TrainerResource extends Resource
     return match (true) {
 
         $record instanceof Trainer =>
-            $record->user?->first_name
-                ? trim($record->user->first_name . ' ' . ($record->user->last_name ?? ''))
+            $record->user?->name
+                ? trim($record->user->name . ' ' . ($record->user->last_name ?? ''))
                 : 'Тренер #' . $record->id,
 
 
@@ -67,7 +67,7 @@ class TrainerResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('user.email'),
-                TextColumn::make('user.first_name'),
+                TextColumn::make('user.name'),
                 TextColumn::make('specialties')
                     ->badge(),
             ])
