@@ -5,13 +5,13 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\PurchaseController;
 use App\Http\Controllers\Api\BookingController;
 
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/refresh', [AuthController::class, 'refresh']);
+Route::post('/register', [AuthController::class, 'register'])->name('api.register');
+Route::post('/login', [AuthController::class, 'login'])->name('api.login');
+Route::post('/refresh', [AuthController::class, 'refresh'])->name('api.refresh');
 
 Route::middleware('auth:jwt')->group(function () {
-    Route::post('/logout', [AuthController::class, 'logout']);
-    Route::get('/me', [AuthController::class, 'me']);
+    Route::post('/logout', [AuthController::class, 'logout'])->name('api.logout');
+    Route::get('/me', [AuthController::class, 'me'])->name('api.me');
 
     Route::post('/purchase', [PurchaseController::class, 'store']);
     Route::apiResource('bookings', BookingController::class)->only(['index', 'store']);
