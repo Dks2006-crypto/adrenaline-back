@@ -26,7 +26,7 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withProviders([
         ...require __DIR__ . '/providers.php',
-        \Tymon\JWTAuth\Providers\LaravelServiceProvider::class, // ← ДОБАВЬ!
+        \Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
     ])
     ->withExceptions(function (Exceptions $exceptions): void {
         //

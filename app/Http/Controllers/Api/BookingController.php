@@ -51,7 +51,7 @@ class BookingController extends Controller
 
     public function index()
     {
-        return auth('sanctum')->user()
+        return auth('jwt')->user()
             ->bookings()
             ->with('form.service')
             ->get();

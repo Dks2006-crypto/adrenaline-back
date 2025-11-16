@@ -13,63 +13,66 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 class AuthController extends Controller
 {
     public function register(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email|unique:users',
-            'password' => 'required|min:6|confirmed',
-            'name' => 'required|string',
-            'phone' => 'nullable|string',
-        ]);
+{
+    $request->validate([
+        'email' => 'required|email|unique:users',
+        'password' => 'required|min:6|confirmed',
+        'name' => 'required|string',
+        'phone' => 'nullable|string',
+    ]);
 
-        $clientRole = Role::firstOrCreate(['name' => 'client']);
+    $clientRole = Role::firstOrCreate(['name' => 'client']);
 
-        $user = User::create([
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'name' => $request->name,
-            'phone' => $request->phone,
-            'role_id' => $clientRole->id,
-            'confirmed_at' => now(),
-        ]);
+    $user = User::create([
+        'email' => $request->email,
+        'password' => Hash::make($request->password),
+        'name' => $request->name,
+        'phone' => $request->phone,
+        'role_id' => $clientRole->id,
+        'confirmed_at' => now(),
+    ]);
 
-        $token = JWTAuth::fromUser($user);
+    $token = auth('jwt')->login($user);
 
-        return response()->json([
-            'user' => [
-                'id' => $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-            ],
-            'token' => $token,
-        ]);
-    }
+    return response()->json([
+        'user' => [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+        ],
+        'token' => $token,
+    ]);
+}
 
     public function login(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
+{
+    $request->validate([
+        'email' => 'required|email',
+        'password' => 'required',
+    ]);
 
-        $credentials = $request->only('email', 'password');
+    $credentials = $request->only('email', 'password');
 
-        if (!$token = JWTAuth::attempt($credentials)) {
-            throw ValidationException::withMessages([
-                'email' => ['Неверные данные.'],
-            ]);
-        }
-
-        $user = auth('jwt')->user();
-
-        return response()->json([
-            'user' => [
-                'id' => $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-            ],
-            'token' => $token,
-        ]);
+    // Попытка аутентификации
+    if (!$token = auth('jwt')->attempt($credentials)) {
+        return response()->json(['error' => 'Неверные данные'], 401);
     }
+
+    $user = auth('jwt')->user();
+
+    if (!$user) {
+        return response()->json(['error' => 'Пользователь не найден'], 500);
+    }
+
+    return response()->json([
+        'user' => [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+        ],
+        'token' => $token,
+    ]);
+}
 
     public function me()
     {
