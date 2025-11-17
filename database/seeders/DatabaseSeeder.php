@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Models\Branch;
 use App\Models\Role;
 use App\Models\Service;
-use App\Models\Trainer;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -23,12 +22,6 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RoleSeeder::class,
         ]);
-
-        // Роли
-        Role::create(['name' => 'admin']);
-        Role::create(['name' => 'manager']);
-        Role::create(['name' => 'trainer']);
-        Role::create(['name' => 'client']);
 
         // Админ
         $admin = User::create([
@@ -55,12 +48,6 @@ class DatabaseSeeder extends Seeder
             'last_name' => 'Тренеров',
             'branch_id' => $branch->id,
             'role_id' => Role::where('name', 'trainer')->first()->id,
-        ]);
-
-        Trainer::create([
-            'user_id' => $trainerUser->id,
-            'bio' => 'Сертифицированный тренер по фитнесу и йоге.',
-            'specialties' => ['yoga', 'pilates'],
         ]);
 
         // Тарифы

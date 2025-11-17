@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('email')->unique();
             $table->string('password');
+            $table->string('avatar')->nullable();
             $table->string('name')->nullable();
             $table->string('last_name')->nullable();
             $table->date('birth_date')->nullable();
@@ -24,6 +25,13 @@ return new class extends Migration
             $table->foreignId('role_id')->constrained()->onDelete('cascade');
             $table->timestamp('confirmed_at')->nullable();
             $table->json('metadata')->nullable();
+
+            $table->text('bio')->nullable();
+            $table->json('specialties')->nullable();
+            $table->decimal('rating', 2, 1)->default(0.0);
+            $table->unsignedInteger('reviews_count')->default(0);
+
+
             $table->timestamps();
         });
 

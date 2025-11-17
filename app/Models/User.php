@@ -24,7 +24,21 @@ class User extends Authenticatable implements JWTSubject
         'branch_id',
         'role_id',
         'confirmed_at',
-        'metadata'
+        'metadata',
+
+        'avatar',
+        'bio',
+        'specialties',
+        'rating',
+        'reviews_count',
+    ];
+
+    protected $casts = [
+        'birth_date'    => 'date',
+        'confirmed_at'  => 'datetime',
+        'metadata'      => 'array',
+        'specialties'   => 'array',
+        'rating'        => 'decimal:1',
     ];
 
     protected $hidden = ['password'];
@@ -49,14 +63,14 @@ class User extends Authenticatable implements JWTSubject
         return $this->belongsTo(Role::class);
     }
 
+    public function forms(): HasMany
+    {
+        return $this->hasMany(Form::class, 'trainer_id');
+    }
+
     public function branch(): BelongsTo
     {
         return $this->belongsTo(Branch::class);
-    }
-
-    public function trainer(): HasOne
-    {
-        return $this->hasOne(Trainer::class);
     }
 
     public function bookings(): HasMany

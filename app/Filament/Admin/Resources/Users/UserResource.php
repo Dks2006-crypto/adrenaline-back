@@ -12,11 +12,17 @@ use BackedEnum;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TagsInput;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
@@ -46,41 +52,86 @@ class UserResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return $schema
-            ->schema([
-                TextInput::make('email')
-                    ->email()
-                    ->required(),
-                TextInput::make('password')
-                    ->password()
-                    ->nullable()
-                    ->dehydrated(fn($state) => filled($state))
-                    ->confirmed(),
-                TextInput::make('password_confirmation')
-                    ->password()
-                    ->dehydrated(false),
-                TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
-                TextInput::make('last_name'),
-                DatePicker::make('birth_date'),
-                Select::make('gender')
-                    ->options(['male' => 'Муж', 'female' => 'Жен', 'other' => 'Другое']),
-                TextInput::make('phone'),
-                Select::make('branch_id')
-                    ->relationship('branch', 'name'),
-                Select::make('role_id')
-                    ->relationship('role', 'name')
-                    ->required(),
-            ]);
+        return $schema->schema([
+            Section::make('Основная информация')
+                ->columns(2)
+                ->schema([
+                    FileUpload::make('avatar')
+                        ->image()
+                        ->avatar()
+                        ->directory('avatars')
+                        ->visibility('public'),
+
+                    TextInput::make('email')->email()->required(),
+                    TextInput::make('password')
+                        ->password()
+                        ->dehydrated(fn($state) => filled($state))
+                        ->confirmed(),
+
+                    TextInput::make('name')->required(),
+                    TextInput::make('last_name'),
+                    DatePicker::make('birth_date'),
+                    Select::make('gender')
+                        ->options(['male' => 'Муж', 'female' => 'Жен', 'other' => 'Другое']),
+                    TextInput::make('phone'),
+                ]),
+
+            Section::make('Доступ')
+                ->columns(2)
+                ->schema([
+                    Select::make('branch_id')
+                        ->relationship('branch', 'name'),
+                    Select::make('role_id')
+                        ->relationship('role', 'name')
+                        ->required()
+                        ->reactive(), // ← важно! чтобы реагировать на смену роли
+                ]),
+
+            // ←←← ПОЛЯ ТРЕНЕРА — видны ТОЛЬКО если выбрана роль "trainer"
+            Section::make('Информация о тренере')
+                ->visible(
+                    fn(Get $get) =>
+                    \App\Models\Role::find($get('role_id'))?->name === 'trainer'
+                )
+                ->columns(2)
+                ->schema([
+                    Textarea::make('bio')
+                        ->rows(4)
+                        ->placeholder('Расскажите о себе...'),
+
+                    TagsInput::make('specialties')
+                        ->label('Специализации')
+                        ->placeholder('Йога, Пилатес, TRX...'),
+
+                    TextInput::make('rating')
+                        ->numeric()
+                        ->step(0.1)
+                        ->minValue(0)
+                        ->maxValue(5)
+                        ->label('Рейтинг')
+                        ->helperText('От 0 до 5'),
+
+                    TextInput::make('reviews_count')
+                        ->numeric()
+                        ->integer()
+                        ->default(0)
+                        ->label('Количество отзывов'),
+                ]),
+        ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                TextColumn::make('email')->searchable(),
-                TextColumn::make('name'),
+                ImageColumn::make('avatar')
+                    ->circular()
+                    ->defaultImageUrl(fn($record) => 'https://ui-avatars.com/api/?name=' . urlencode($record->name ?? 'U')),
+                TextColumn::make('email')
+                    ->searchable(),
+                TextColumn::make('name')
+                    ->searchable(),
+
                 TextColumn::make('role.name')
                     ->badge()
                     ->color(fn($state) => match ($state) {
@@ -89,6 +140,20 @@ class UserResource extends Resource
                         'client' => 'success',
                         default => 'gray',
                     }),
+
+                TextColumn::make('rating')
+                    ->label('Рейтинг')
+                    ->default('—')
+                    ->formatStateUsing(fn($state) => $state > 0 ? number_format($state, 1) : '—')
+                    ->badge()
+                    ->color(fn($state) => $state >= 4.5 ? 'success' : ($state >= 4.0 ? 'warning' : 'danger'))
+                    ->visible(fn() => auth()->user()->isAdmin()),
+
+                TextColumn::make('forms_count')
+                    ->label('Занятий')
+                    ->counts('forms')
+                    ->sortable(),
+
                 TextColumn::make('branch.name'),
             ])
             ->actions([

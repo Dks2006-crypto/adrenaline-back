@@ -9,8 +9,12 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class Membership extends Model
 {
     protected $fillable = [
-        'user_id', 'service_id', 'start_date', 'end_date',
-        'remaining_visits', 'status'
+        'user_id',
+        'service_id',
+        'start_date',
+        'end_date',
+        'remaining_visits',
+        'status'
     ];
 
     protected $casts = [
@@ -36,6 +40,6 @@ class Membership extends Model
     public function isActive(): bool
     {
         return $this->status === 'active' &&
-               $this->end_date >= now()->startOfDay();
+            $this->end_date >= now()->startOfDay();
     }
 }

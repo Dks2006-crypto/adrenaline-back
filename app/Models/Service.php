@@ -9,8 +9,15 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Service extends Model
 {
     protected $fillable = [
-        'title', 'description', 'duration_days', 'visits_limit',
-        'price_cents', 'currency', 'branch_id', 'active', 'type'
+        'title',
+        'description',
+        'duration_days',
+        'visits_limit',
+        'price_cents',
+        'currency',
+        'branch_id',
+        'active',
+        'type'
     ];
 
     protected $casts = [

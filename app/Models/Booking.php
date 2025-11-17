@@ -33,7 +33,8 @@ class Booking extends Model
 
     public function trainer(): BelongsTo
     {
-        return $this->belongsTo(Trainer::class);
+        return $this->belongsTo(User::class, 'trainer_id')
+            ->whereHas('role', fn($q) => $q->where('name', 'trainer'));
     }
 
     public function attendance(): HasOne
