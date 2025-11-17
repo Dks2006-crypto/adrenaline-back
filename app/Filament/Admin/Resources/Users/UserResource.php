@@ -28,20 +28,20 @@ class UserResource extends Resource
     protected static ?string $navigationLabel = 'Пользователи';
 
     public static function getRecordTitle(?Model $record): ?string
-{
-    if (!$record) {
-        return null;
-    }
+    {
+        if (!$record) {
+            return null;
+        }
 
-    return match (true) {
-        $record instanceof User =>
+        return match (true) {
+            $record instanceof User =>
             $record->name
                 ? trim($record->name . ' ' . ($record->last_name ?? ''))
                 : $record->email,
 
-        default => $record->getKey(),
-    };
-}
+            default => $record->getKey(),
+        };
+    }
 
 
     public static function form(Schema $schema): Schema
@@ -54,7 +54,7 @@ class UserResource extends Resource
                 TextInput::make('password')
                     ->password()
                     ->nullable()
-                    ->dehydrated(fn ($state) => filled($state))
+                    ->dehydrated(fn($state) => filled($state))
                     ->confirmed(),
                 TextInput::make('password_confirmation')
                     ->password()
@@ -83,7 +83,7 @@ class UserResource extends Resource
                 TextColumn::make('name'),
                 TextColumn::make('role.name')
                     ->badge()
-                    ->color(fn ($state) => match ($state) {
+                    ->color(fn($state) => match ($state) {
                         'admin' => 'danger',
                         'trainer' => 'warning',
                         'client' => 'success',

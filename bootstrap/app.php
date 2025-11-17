@@ -1,7 +1,6 @@
 <?php
 
-
-
+use App\Http\Middleware\AdminOnly;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Illuminate\Foundation\Application;
@@ -20,9 +19,13 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             DisableBladeIconComponents::class,
             DispatchServingFilamentEvent::class,
-        ]);
 
-        $middleware->validateCsrfTokens();
+        ]);
+        $middleware->alias([
+        'admin.only' => AdminOnly::class,
+    ]);
+
+
     })
     ->withProviders([
         ...require __DIR__ . '/providers.php',
