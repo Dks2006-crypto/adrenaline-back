@@ -15,7 +15,6 @@ class AdminOnly
             return redirect()->route('filament.admin.auth.login');
         }
 
-        // ←←← ВОТ ГЛАВНОЕ ИЗМЕНЕНИЕ
         if (!Auth::user()->isAdmin()) {
             // Разлогиниваем обычного пользователя
             Auth::guard('web')->logout();

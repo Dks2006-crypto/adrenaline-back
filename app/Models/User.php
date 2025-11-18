@@ -43,6 +43,17 @@ class User extends Authenticatable implements JWTSubject
 
     protected $hidden = ['password'];
 
+    protected $appends = ['avatar_url'];
+
+    public function getAvatarUrlAttribute(): ?string
+    {
+        if (!$this->avatar) {
+            return null;
+        }
+        // Это будет работать всегда — и в локалке, и на проде
+        return asset('storage/' . $this->avatar);
+    }
+
     // ← JWT: Обязательные методы
     public function getJWTIdentifier()
     {

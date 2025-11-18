@@ -12,6 +12,7 @@ Route::post('/refresh', [AuthController::class, 'refresh'])->name('api.refresh')
 Route::middleware('auth:jwt')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('api.logout');
     Route::get('/me', [AuthController::class, 'me'])->name('api.me');
+    Route::post('/me/avatar', [AuthController::class, 'updateAvatar']);
 
     Route::post('/purchase', [PurchaseController::class, 'store']);
     Route::apiResource('bookings', BookingController::class)->only(['index', 'store']);

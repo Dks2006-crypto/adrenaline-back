@@ -60,6 +60,7 @@ class UserResource extends Resource
                         ->image()
                         ->avatar()
                         ->directory('avatars')
+                        ->disk('public')
                         ->visibility('public'),
 
                     TextInput::make('email')->email()->required(),

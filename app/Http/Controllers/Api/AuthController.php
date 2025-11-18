@@ -9,80 +9,85 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use Illuminate\Support\Facades\Storage;
 
 class AuthController extends Controller
 {
     public function register(Request $request)
-{
-    $request->validate([
-        'email' => 'required|email|unique:users',
-        'password' => 'required|min:6|confirmed',
-        'name' => 'required|string',
-        'phone' => 'nullable|string',
-    ]);
+    {
+        $request->validate([
+            'email' => 'required|email|unique:users',
+            'password' => 'required|min:6|confirmed',
+            'name' => 'required|string',
+            'phone' => 'nullable|string',
+        ]);
 
-    $clientRole = Role::firstOrCreate(['name' => 'client']);
+        $clientRole = Role::firstOrCreate(['name' => 'client']);
 
-    $user = User::create([
-        'email' => $request->email,
-        'password' => Hash::make($request->password),
-        'name' => $request->name,
-        'phone' => $request->phone,
-        'role_id' => $clientRole->id,
-        'confirmed_at' => now(),
-    ]);
+        $user = User::create([
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'name' => $request->name,
+            'phone' => $request->phone,
+            'role_id' => $clientRole->id,
+            'confirmed_at' => now(),
+        ]);
 
-    $token = auth('jwt')->login($user);
+        $token = auth('jwt')->login($user);
 
-    return response()->json([
-        'user' => [
-            'id' => $user->id,
-            'name' => $user->name,
-            'email' => $user->email,
-        ],
-        'token' => $token,
-    ]);
-}
+        return $this->respondWithToken($token, $user);
+    }
 
     public function login(Request $request)
-{
-    $request->validate([
-        'email' => 'required|email',
-        'password' => 'required',
-    ]);
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
 
-    $credentials = $request->only('email', 'password');
+        if (!$token = auth('jwt')->attempt($request->only('email', 'password'))) {
+            return response()->json(['error' => 'Неверные данные'], 401);
+        }
 
-    // Попытка аутентификации
-    if (!$token = auth('jwt')->attempt($credentials)) {
-        return response()->json(['error' => 'Неверные данные'], 401);
+        $user = auth('jwt')->user();
+
+        return $this->respondWithToken($token, $user);
     }
-
-    $user = auth('jwt')->user();
-
-    if (!$user) {
-        return response()->json(['error' => 'Пользователь не найден'], 500);
-    }
-
-    return response()->json([
-        'user' => [
-            'id' => $user->id,
-            'name' => $user->name,
-            'email' => $user->email,
-        ],
-        'token' => $token,
-    ]);
-}
 
     public function me()
     {
+        return response()->json(auth('jwt')->user());
+    }
+
+    public function updateAvatar(Request $request)
+    {
+        $request->validate([
+            'avatar' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:10240', // 5MB
+        ]);
+
         $user = auth('jwt')->user();
 
+        // Удаляем старый аватар, если был
+        if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
+            Storage::disk('public')->delete($user->avatar);
+        }
+
+        $path = $request->file('avatar')->store('avatars', 'public');
+
+        $user->update(['avatar' => $path]);
+
         return response()->json([
-            'id' => $user->id,
-            'name' => $user->name,
-            'email' => $user->email,
-            'role_id' => $user->role_id,
+            'message' => 'Аватар обновлён',
+            'avatar_url' => asset('storage/' . $path),
+        ]);
+    }
+
+    // ← ВСПОМОГАТЕЛЬНЫЙ МЕТОД — пиши один раз и используй везде
+    protected function respondWithToken($token, $user)
+    {
+        return response()->json([
+            'user' => $user,           // ← ВСЁ! Laravel сам сериализует с avatar_url
+            'token' => $token,
         ]);
     }
 
