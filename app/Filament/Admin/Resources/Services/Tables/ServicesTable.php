@@ -28,8 +28,6 @@ class ServicesTable
                     ->sortable(),
                 TextColumn::make('currency')
                     ->searchable(),
-                TextColumn::make('branch.name')
-                    ->searchable(),
                 IconColumn::make('active')
                     ->boolean(),
                 TextColumn::make('type')

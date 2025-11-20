@@ -28,8 +28,6 @@ class UsersTable
                     ->searchable(),
                 TextColumn::make('phone')
                     ->searchable(),
-                TextColumn::make('branch.name')
-                    ->searchable(),
                 TextColumn::make('role.name')
                     ->searchable(),
                 TextColumn::make('confirmed_at')

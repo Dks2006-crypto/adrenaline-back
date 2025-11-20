@@ -28,8 +28,6 @@ class UserForm
                 TextInput::make('gender'),
                 TextInput::make('phone')
                     ->tel(),
-                Select::make('branch_id')
-                    ->relationship('branch', 'name'),
                 Select::make('role_id')
                     ->relationship('role', 'name')
                     ->required(),

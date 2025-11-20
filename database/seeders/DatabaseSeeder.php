@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\Branch;
 use App\Models\Role;
 use App\Models\Service;
 use App\Models\User;
@@ -32,13 +31,6 @@ class DatabaseSeeder extends Seeder
             'confirmed_at' => now(),
         ]);
 
-        // Филиалы
-        $branch = Branch::create([
-            'name' => 'Фитнес-клуб "Сила"',
-            'address' => 'ул. Ленина, 10',
-            'timezone' => 'Europe/Moscow',
-            'contact_phone' => '+7 (999) 123-45-67',
-        ]);
 
         // Тренера
         $trainerUser = User::create([
@@ -46,7 +38,6 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('password'),
             'name' => 'Алексей',
             'last_name' => 'Тренеров',
-            'branch_id' => $branch->id,
             'role_id' => Role::where('name', 'trainer')->first()->id,
         ]);
 
@@ -58,7 +49,6 @@ class DatabaseSeeder extends Seeder
             'visits_limit' => null,
             'price_cents' => 490000, // 4900.00 RUB
             'currency' => 'RUB',
-            'branch_id' => $branch->id,
             'type' => 'monthly',
         ]);
 
@@ -69,7 +59,6 @@ class DatabaseSeeder extends Seeder
             'visits_limit' => 10,
             'price_cents' => 350000,
             'currency' => 'RUB',
-            'branch_id' => $branch->id,
             'type' => 'single',
         ]);
     }

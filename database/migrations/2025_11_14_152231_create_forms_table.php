@@ -15,7 +15,6 @@ return new class extends Migration
         $table->id();
         $table->foreignId('service_id')->constrained()->onDelete('cascade');
         $table->foreignId('trainer_id')->nullable()->constrained()->onDelete('set null');
-        $table->foreignId('branch_id')->constrained()->onDelete('cascade');
         $table->dateTime('starts_at');
         $table->dateTime('ends_at');
         $table->integer('capacity');

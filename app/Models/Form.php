@@ -11,7 +11,6 @@ class Form extends Model
     protected $fillable = [
         'service_id',
         'trainer_id',
-        'branch_id',
         'starts_at',
         'ends_at',
         'capacity'

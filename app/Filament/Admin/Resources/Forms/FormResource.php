@@ -53,9 +53,6 @@ class FormResource extends Resource
                     ->required(),
                 Select::make('trainer_id')
                     ->relationship('trainer.user', 'name'),
-                Select::make('branch_id')
-                    ->relationship('branch', 'name')
-                    ->required(),
                 DateTimePicker::make('starts_at')->required(),
                 DateTimePicker::make('ends_at')->required(),
                 TextInput::make('capacity')->numeric()->required(),

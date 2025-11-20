@@ -48,9 +48,6 @@ protected static ?string $model = Service::class;
                     ->numeric()
                     ->required()
                     ->helperText('490000 = 4900.00 ₽'),
-                Select::make('branch_id')
-                    ->relationship('branch', 'name')
-                    ->required(),
                 Toggle::make('active')
                     ->default(true),
                 Select::make('type')
@@ -71,7 +68,6 @@ protected static ?string $model = Service::class;
                 TextColumn::make('price_cents')
                     ->money('RUB', 100)
                     ->sortable(),
-                TextColumn::make('branch.name'),
                 BadgeColumn::make('type')
                     ->colors([
                         'success' => 'monthly',

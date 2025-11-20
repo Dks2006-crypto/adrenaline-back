@@ -80,8 +80,6 @@ class UserResource extends Resource
             Section::make('Доступ')
                 ->columns(2)
                 ->schema([
-                    Select::make('branch_id')
-                        ->relationship('branch', 'name'),
                     Select::make('role_id')
                         ->relationship('role', 'name')
                         ->required()
@@ -154,8 +152,6 @@ class UserResource extends Resource
                     ->label('Занятий')
                     ->counts('forms')
                     ->sortable(),
-
-                TextColumn::make('branch.name'),
             ])
             ->actions([
                 EditAction::make(),

@@ -29,8 +29,6 @@ class ServiceForm
                 TextInput::make('currency')
                     ->required()
                     ->default('RUB'),
-                Select::make('branch_id')
-                    ->relationship('branch', 'name'),
                 Toggle::make('active')
                     ->required(),
                 TextInput::make('type')

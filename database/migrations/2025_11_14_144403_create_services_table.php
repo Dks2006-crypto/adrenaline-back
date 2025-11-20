@@ -19,7 +19,6 @@ return new class extends Migration
             $table->integer('visits_limit')->nullable();
             $table->bigInteger('price_cents');
             $table->string('currency', 3)->default('RUB');
-            $table->foreignId('branch_id')->nullable()->constrained()->onDelete('set null');
             $table->boolean('active')->default(true);
             $table->string('type')->default('monthly');
             $table->timestamps();

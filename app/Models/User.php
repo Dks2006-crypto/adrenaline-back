@@ -21,7 +21,6 @@ class User extends Authenticatable implements JWTSubject
         'birth_date',
         'gender',
         'phone',
-        'branch_id',
         'role_id',
         'confirmed_at',
         'metadata',
@@ -77,11 +76,6 @@ class User extends Authenticatable implements JWTSubject
     public function forms(): HasMany
     {
         return $this->hasMany(Form::class, 'trainer_id');
-    }
-
-    public function branch(): BelongsTo
-    {
-        return $this->belongsTo(Branch::class);
     }
 
     public function bookings(): HasMany

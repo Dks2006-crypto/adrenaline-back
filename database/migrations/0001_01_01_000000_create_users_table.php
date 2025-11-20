@@ -21,7 +21,6 @@ return new class extends Migration
             $table->date('birth_date')->nullable();
             $table->string('gender')->nullable();
             $table->string('phone')->nullable();
-            $table->foreignId('branch_id')->nullable()->constrained()->onDelete('set null');
             $table->foreignId('role_id')->constrained()->onDelete('cascade');
             $table->timestamp('confirmed_at')->nullable();
             $table->json('metadata')->nullable();

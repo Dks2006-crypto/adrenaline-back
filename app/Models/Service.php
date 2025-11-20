@@ -15,7 +15,6 @@ class Service extends Model
         'visits_limit',
         'price_cents',
         'currency',
-        'branch_id',
         'active',
         'type'
     ];
@@ -24,11 +23,6 @@ class Service extends Model
         'price_cents' => 'integer',
         'active' => 'boolean',
     ];
-
-    public function branch(): BelongsTo
-    {
-        return $this->belongsTo(Branch::class);
-    }
 
     public function classes(): HasMany
     {
