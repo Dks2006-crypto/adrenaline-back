@@ -2,12 +2,18 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Booking extends Model
 {
+
+    use HasFactory;
+
+    protected $table = 'bookings';
+
     protected $fillable = [
         'user_id',
         'class_id',
@@ -33,8 +39,7 @@ class Booking extends Model
 
     public function trainer(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'trainer_id')
-            ->whereHas('role', fn($q) => $q->where('name', 'trainer'));
+        return $this->belongsTo(User::class, 'trainer_id');
     }
 
     public function attendance(): HasOne

@@ -14,7 +14,7 @@ Route::post('/login', [AuthController::class, 'login'])->name('api.login');
 Route::post('/refresh', [AuthController::class, 'refresh'])->name('api.refresh');
 
 Route::get('/public/trainers', function () {
-    return \App\Models\User::where('role_id', 2) // Используем role_id = 2
+    return \App\Models\User::where('role_id', 3) // Используем role_id = 3 для trainer
     ->select(['id', 'name', 'last_name', 'avatar', 'bio', 'specialties', 'rating', 'reviews_count']) // Добавляем reviews_count для фронта
     ->get();
 })->name('api.public.trainers');

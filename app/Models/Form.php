@@ -26,6 +26,11 @@ class Form extends Model
         return $this->belongsTo(Service::class);
     }
 
+    public function trainer()
+    {
+        return $this->belongsTo(User::class, 'trainer_id');
+    }
+
     public function bookings()
     {
         return $this->hasMany(Booking::class, 'class_id');
