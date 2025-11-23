@@ -20,7 +20,8 @@ class Booking extends Model
         'trainer_id',
         'status',
         'cancelled_at',
-        'note'
+        'note',
+        'trainer_comment'
     ];
 
     protected $casts = [

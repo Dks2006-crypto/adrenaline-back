@@ -14,8 +14,8 @@ Route::post('/login', [AuthController::class, 'login'])->name('api.login');
 Route::post('/refresh', [AuthController::class, 'refresh'])->name('api.refresh');
 
 Route::get('/public/trainers', function () {
-    return \App\Models\User::where('role_id', 3) // Используем role_id = 3 для trainer
-    ->select(['id', 'name', 'last_name', 'avatar', 'bio', 'specialties', 'rating', 'reviews_count']) // Добавляем reviews_count для фронта
+    return \App\Models\User::where('role_id', 2) // role_id = 2 для тренеров
+    ->select(['id', 'name', 'last_name', 'avatar', 'bio', 'specialties', 'rating', 'reviews_count'])
     ->get();
 })->name('api.public.trainers');
 
@@ -30,6 +30,7 @@ Route::middleware('auth:jwt')->group(function () {
 
     Route::get('/trainer/bookings', [TrainerController::class, 'indexBookings']);
     Route::patch('/trainer/bookings/{booking}', [TrainerController::class, 'updateBookingStatus']);
+    Route::patch('/trainer/bookings/{booking}/comment', [TrainerController::class, 'updateTrainerComment']);
     Route::get('/memberships', [MembershipController::class, 'index']);
 
     Route::get('/classes', fn() => Form::with('service')->get());

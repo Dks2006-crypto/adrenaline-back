@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('bookings', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('class_id')->nullable()->constrained()->onDelete('set null');
-            $table->foreignId('trainer_id')->nullable()->constrained()->onDelete('set null');
+            $table->foreignId('class_id')->nullable()->constrained('forms')->onDelete('set null');
+            $table->foreignId('trainer_id')->nullable()->constrained('users')->onDelete('set null');
             $table->string('status')->default('pending');
             $table->timestamp('cancelled_at')->nullable();
             $table->text('note')->nullable();

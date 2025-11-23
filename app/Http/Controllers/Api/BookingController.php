@@ -45,7 +45,7 @@ class BookingController extends Controller
                 $classId = $form->id;
             } else {
                 $trainer = User::where('id', $request->trainer_id)
-                    ->where('role_id', 3)
+                    ->where('role_id', 2) // role_id = 2 для тренеров
                     ->first();
 
                 if (!$trainer) {
@@ -82,10 +82,7 @@ class BookingController extends Controller
             }
 
             // Грузим связи безопасно
-            $booking->load([
-                'trainer',
-                'form' => fn($q) => $q->with('service')
-            ]);
+            $booking->load(['trainer', 'form.service']);
 
             return response()->json([
                 'message' => $isGroup
@@ -94,7 +91,7 @@ class BookingController extends Controller
                 'booking' => $booking,
             ], 201);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Внутренняя ошибка сервера'], 500);
+            return response()->json(['error' => $e->getMessage(), 'line' => $e->getLine()], 500);
         }
     }
 
@@ -102,8 +99,9 @@ class BookingController extends Controller
 
     public function index()
     {
-        return auth('jwt')->user()
-            ->bookings()
+        return Booking::query()
+            ->where('user_id', auth('jwt')->user()->id)
+            ->select('id', 'user_id', 'class_id', 'trainer_id', 'status', 'cancelled_at', 'note', 'trainer_comment', 'created_at')
             ->latest()
             ->with([
                 // Для групповых занятий:
