@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\MembershipController;
 use App\Http\Controllers\Api\TrainerController;
 use App\Models\Form;
 use App\Models\Service;
+use App\Models\Coupon;
 
 Route::post('/register', [AuthController::class, 'register'])->name('api.register');
 Route::post('/login', [AuthController::class, 'login'])->name('api.login');
@@ -17,6 +18,33 @@ Route::get('/public/trainers', [TrainerController::class, 'indexPublic'])->name(
 
 Route::get('/services', fn() => Service::where('active', true)->get());
 Route::post('/purchase', [PurchaseController::class, 'store']);
+
+// Проверка промокода
+Route::post('/coupons/check', function (\Illuminate\Http\Request $request) {
+    $request->validate(['code' => 'required|string']);
+
+    $coupon = Coupon::where('code', $request->code)->first();
+
+    if (!$coupon) {
+        return response()->json([
+            'valid' => false,
+            'message' => 'Промокод не найден'
+        ], 404);
+    }
+
+    if (!$coupon->isValid()) {
+        return response()->json([
+            'valid' => false,
+            'message' => 'Промокод недействителен или истёк'
+        ], 400);
+    }
+
+    return response()->json([
+        'valid' => true,
+        'discount_percent' => $coupon->discount_percent,
+        'message' => "Скидка {$coupon->discount_percent}% применена!"
+    ]);
+});
 Route::apiResource('bookings', BookingController::class)->only(['index', 'store']);
 
 Route::middleware('auth:jwt')->group(function () {
