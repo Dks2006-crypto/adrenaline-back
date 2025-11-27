@@ -6,9 +6,13 @@ use App\Http\Controllers\Api\PurchaseController;
 use App\Http\Controllers\Api\BookingController;
 use App\Http\Controllers\Api\MembershipController;
 use App\Http\Controllers\Api\TrainerController;
+use App\Http\Controllers\Api\SectionSettingController;
 use App\Models\Form;
 use App\Models\Service;
 use App\Models\Coupon;
+
+// Публичные эндпоинты для Hero секции
+Route::get('/hero', [SectionSettingController::class, 'index']);
 
 Route::post('/register', [AuthController::class, 'register'])->name('api.register');
 Route::post('/login', [AuthController::class, 'login'])->name('api.login');

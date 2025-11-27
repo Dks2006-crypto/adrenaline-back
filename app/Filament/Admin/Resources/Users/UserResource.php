@@ -140,14 +140,6 @@ class UserResource extends Resource
                         default => 'gray',
                     }),
 
-                TextColumn::make('rating')
-                    ->label('Рейтинг')
-                    ->default('—')
-                    ->formatStateUsing(fn($state) => $state > 0 ? number_format($state, 1) : '—')
-                    ->badge()
-                    ->color(fn($state) => $state >= 4.5 ? 'success' : ($state >= 4.0 ? 'warning' : 'danger'))
-                    ->visible(fn() => auth()->user()->isAdmin()),
-
                 TextColumn::make('forms_count')
                     ->label('Занятий')
                     ->counts('forms')
