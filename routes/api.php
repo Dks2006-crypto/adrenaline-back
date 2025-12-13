@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\MembershipController;
 use App\Http\Controllers\Api\TrainerController;
 use App\Http\Controllers\Api\SectionSettingController;
 use App\Http\Controllers\Api\GroupClassController;
+use App\Http\Controllers\GalleryController;
 use App\Models\Form;
 use App\Models\Service;
 use App\Models\Coupon;
@@ -24,9 +25,12 @@ Route::get('/public/trainers', [TrainerController::class, 'indexPublic'])->name(
 Route::get('/services', fn() => Service::where('active', true)->get());
 Route::post('/purchase', [PurchaseController::class, 'store']);
 
+
 // Публичные эндпоинты для групповых занятий
 Route::get('/group-classes', [GroupClassController::class, 'indexPublic']);
 Route::get('/group-classes/{groupClass}', [GroupClassController::class, 'show']);
+
+Route::get('/gallery', [GalleryController::class, 'index']);
 
 // Проверка промокода
 Route::post('/coupons/check', function (\Illuminate\Http\Request $request) {
