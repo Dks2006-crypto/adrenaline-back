@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('currency', 3)->default('RUB');
             $table->boolean('active')->default(true);
             $table->string('type')->default('monthly');
+            $table->json('base_benefits')->nullable();
             $table->timestamps();
         });
     }

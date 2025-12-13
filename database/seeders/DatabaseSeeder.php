@@ -19,7 +19,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-
         $this->call([
             RoleSeeder::class,
             SectionSettingSeeder::class,
@@ -35,8 +34,7 @@ class DatabaseSeeder extends Seeder
             'confirmed_at' => now(),
         ]);
 
-
-        // Тренера
+        // Тренер
         $trainerUser = User::create([
             'email' => 'trainer@fitness.ru',
             'password' => bcrypt('password'),
@@ -55,18 +53,64 @@ class DatabaseSeeder extends Seeder
             'role_id' => Role::where('name', 'client')->first()->id,
         ]);
 
-        // Подписка для клиента
-        $monthlyService = Service::firstOrCreate([
-            'title' => 'Месячный безлимит',
-        ], [
-            'description' => 'Полный доступ ко всем залам',
-            'duration_days' => 30,
-            'visits_limit' => null,
-            'price_cents' => 490000,
-            'currency' => 'RUB',
-            'type' => 'monthly',
-        ]);
+        // Тарифы (с base_benefits и актуальными полями)
 
+        $monthlyService = Service::firstOrCreate(
+            ['title' => 'Месячный безлимит'],
+            [
+                'description' => 'Полный доступ ко всем залам и групповым занятиям',
+                'base_benefits' => [
+                    ['benefit' => 'Безлимитные посещения тренажёрного зала'],
+                    ['benefit' => 'Доступ ко всем групповым занятиям'],
+                    ['benefit' => 'Сауна и хаммам в подарок'],
+                ],
+                'duration_days' => 30,
+                'visits_limit' => null,
+                'price_cents' => 490000, // 4900 ₽
+                'currency' => 'RUB',
+                'active' => true,
+                'type' => 'monthly',
+            ]
+        );
+
+        $singleVisitsService = Service::firstOrCreate(
+            ['title' => '10 посещений'],
+            [
+                'description' => 'Пакет разовых посещений на 90 дней',
+                'base_benefits' => [
+                    ['benefit' => '10 посещений тренажёрного зала'],
+                    ['benefit' => 'Гибкий график — приходите когда удобно'],
+                    ['benefit' => 'Действует 90 дней с момента активации'],
+                ],
+                'duration_days' => 90,
+                'visits_limit' => 10,
+                'price_cents' => 350000, // 3500 ₽
+                'currency' => 'RUB',
+                'active' => true,
+                'type' => 'single',
+            ]
+        );
+
+        // Ещё один пример — годовой тариф
+        Service::firstOrCreate(
+            ['title' => 'Годовой безлимит'],
+            [
+                'description' => 'Максимальная выгода для постоянных клиентов',
+                'base_benefits' => [
+                    ['benefit' => 'Безлимит на весь год'],
+                    ['benefit' => '2 гостевых визита в месяц'],
+                    ['benefit' => 'Персональная тренировка в подарок'],
+                ],
+                'duration_days' => 365,
+                'visits_limit' => null,
+                'price_cents' => 3990000, // 39 900 ₽
+                'currency' => 'RUB',
+                'active' => true,
+                'type' => 'yearly',
+            ]
+        );
+
+        // Подписка для клиента (на месячный безлимит)
         Membership::create([
             'user_id' => $clientUser->id,
             'service_id' => $monthlyService->id,
@@ -84,27 +128,6 @@ class DatabaseSeeder extends Seeder
             'status' => 'pending',
             'note' => 'Хочу похудеть и набрать мышечную массу',
             'trainer_comment' => 'Хорошо, давайте начнем с оценки вашего текущего состояния. Приходите в зал в понедельник в 10:00.',
-        ]);
-
-        // Тарифы
-        Service::create([
-            'title' => 'Месячный безлимит',
-            'description' => 'Полный доступ ко всем залам',
-            'duration_days' => 30,
-            'visits_limit' => null,
-            'price_cents' => 490000, // 4900.00 RUB
-            'currency' => 'RUB',
-            'type' => 'monthly',
-        ]);
-
-        Service::create([
-            'title' => '10 посещений',
-            'description' => 'Разовые посещения',
-            'duration_days' => 90,
-            'visits_limit' => 10,
-            'price_cents' => 350000,
-            'currency' => 'RUB',
-            'type' => 'single',
         ]);
     }
 }
