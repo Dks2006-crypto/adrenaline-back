@@ -14,7 +14,7 @@ class TrainerController extends Controller
     public function indexPublic()
     {
         $trainers = User::where('role_id', 2)
-            ->select('id', 'name', 'last_name', 'avatar', 'bio', 'specialties')
+            ->select('id', 'name', 'last_name', 'avatar', 'bio', 'specialties', 'accepts_personal_bookings')
             ->get()
             ->map(function ($trainer) {
                 $trainer->avatar_url = $trainer->avatar
@@ -26,6 +26,33 @@ class TrainerController extends Controller
             ->makeHidden('avatar');
 
         return response()->json($trainers);
+    }
+
+    // Обновление настройки приема персональных заявок
+    public function updatePersonalBookingsSetting(Request $request)
+    {
+        /** @var \App\Models\User $trainer */
+        $trainer = auth('jwt')->user();
+
+        // Проверяем, что это тренер
+        if (!$trainer || $trainer->role_id !== 2) {
+            return response()->json(['error' => 'Доступ запрещен'], 403);
+        }
+
+        // Валидация
+        $request->validate([
+            'accepts_personal_bookings' => 'required|boolean',
+        ]);
+
+        // Обновляем настройку
+        $trainer->update([
+            'accepts_personal_bookings' => $request->accepts_personal_bookings,
+        ]);
+
+        return response()->json([
+            'message' => 'Настройка обновлена',
+            'accepts_personal_bookings' => $trainer->accepts_personal_bookings,
+        ]);
     }
 
 

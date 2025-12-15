@@ -73,6 +73,7 @@ Route::middleware('auth:jwt')->group(function () {
     Route::get('/trainer/bookings', [TrainerController::class, 'indexBookings']);
     Route::patch('/trainer/bookings/{booking}', [TrainerController::class, 'updateBookingStatus']);
     Route::patch('/trainer/bookings/{booking}/comment', [TrainerController::class, 'updateTrainerComment']);
+    Route::patch('/trainer/personal-bookings-setting', [TrainerController::class, 'updatePersonalBookingsSetting']);
     Route::get('/memberships', [MembershipController::class, 'index']);
 
     Route::get('/classes', fn() => Form::with('service')->get());

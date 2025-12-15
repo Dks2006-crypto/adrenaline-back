@@ -28,6 +28,7 @@ class User extends Authenticatable implements JWTSubject
         'avatar',
         'bio',
         'specialties',
+        'accepts_personal_bookings',
     ];
 
     protected $casts = [
